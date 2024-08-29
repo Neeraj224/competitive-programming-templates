@@ -26,6 +26,8 @@ class Graph:
         for row in self.adjacencyMatrix:
             print(row)
     
+    ############################## traversals #################################
+    
     def dfs(self, node):
         if node in self.DFSvisited:
             return node
@@ -55,7 +57,9 @@ class Graph:
         
         return self.BFSTraversal
     
-    def hasCycle(self, node):
+    ############################## cycle detection algorithms #################################
+    
+    def hasCycleBFS(self, node):
         visited = set()
         
         """
@@ -103,6 +107,51 @@ class Graph:
         for i in range(len(self.adjacency_list)):
             if i not in visited:
                 if detect(i, visited):
+                    return True
+        
+        return False
+    
+    def hasCycleDFS(self, node):
+        # this hasCycle() detection method will use DFS, instead of the previous one we used - BFS
+        # DFS helps in finding cycles in directed graphs, while BFS is comparatively better for
+        # undirected graphs.
+        
+        visited = set()
+        
+        def dfs(node, parent):
+            # first we will add the current node to the visited set:
+            visited.add(node)
+            
+            # then check if it has neighbors
+            if self.adjacency_list[node] is not None:
+                # if it does, then we iterate over the neighbors one by one, 
+                # performing dfs on all of them, and checking if we encountered a node
+                # again - but a node that isnt the parent of the current one we're visiting!
+                for neighbor in self.adjacency_list[node]:
+                    # so lets see first if it was visited or not:
+                    if neighbor not in visited:
+                        # if it wasnt, then call dfs on its neighbor recursively (if it wasnt visited)
+                        # and check if it returns True or not
+                        if dfs(neighbor, node) == True:
+                            # if it does, then somewhere down the branch, it detected a cycle
+                            # so we already got a cycle, then we need to return True
+                            return True
+                    # else if it was visited, and the neighbor isnt a parent,
+                    # then it means it found a visited node before - that means
+                    # we ended up traversing to somewhere we had already crossed.
+                    # That means we have a cycle!
+                    # (this will be our base case btw):
+                    elif neighbor != parent:
+                        # so return True:
+                        return True
+            
+            # or if we never encounter a node twice (even until a certain branch), that means
+            # there was no cycle, so we just return False:
+            return False
+        
+        for i in range(0, len(self.adjacency_list)):
+            if i not in visited:
+                if dfs(i, -1) == True:
                     return True
         
         return False
