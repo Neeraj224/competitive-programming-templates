@@ -1,4 +1,15 @@
 # check this question: https://codeforces.com/group/MWSDmqGsZm/contest/223339/problem/Y
+"""
+    The basic way of exploring paths - recur/backtrack:
+    -------------------------------------------------------------------------------------
+    The basic way of exploring paths using recursion and backtracking:
+    - take path
+    - explore path (recurse)
+    - remove path
+    
+    then move on to the next path and do the same thing (take, explore/recurse, remove)
+    -------------------------------------------------------------------------------------
+"""
 
 import sys
 input = sys.stdin.readline
