@@ -181,6 +181,70 @@ class Graph:
         
         return distances
     
+    def connectedComponentsDFS(self):
+        """
+            for finding the number of connected components in a graph,
+            we should be given how many nodes are there in it!
+        """
+        
+        # we will use a graph-coloring technique with DFS
+        # to find the number of connected components
+        # coloring mainly because it will help us keep track
+        # of the what nodes have been completely processed
+        # in a depth-first way, and what nodes are 
+        # currently being processed/yet to be processed completely
+        
+        # first we initialize all the nodes with white color
+        # NOTE: COLORS:
+        #           - white: initialized/unexplored/unvisited/unseen
+        #           - gray: processing/visiting
+        #           - black: completed/processed
+        self.color = {node: 'white' for node in self.adjacency_list}
+
+        # check if all nodes have been colored white (initialized with white)
+        print(self.color)
+        
+        # we initialize our connected components as zero
+        connected_components = 0
+        
+        # then we perform DFS on the nodes in the graph
+        # only if the node is still colored white
+        for node in self.adjacency_list:
+            # check if the node has already been processed or not
+            # if it is anything other than white, then it was
+            # already processed and found, and hence is part of
+            # a component
+            if self.color[node] == 'white':
+                # if white, then this means that the node is a new
+                # one and part of a separate component, so need to 
+                # process it in a depth-first way:
+                self.DFS(node)
+                # and since this is a new component, increment the number
+                # of compnents we saw
+                connected_components += 1
+        
+        # check if the entire graph has been processed or not:
+        # NOTE: all nodes should be colored black!
+        print(self.color)
+        
+        return connected_components
+    
+    def DFS(self, node):
+        # this is not needed for finding connected components, 
+        # but we can use it in other algorithms
+        self.color[node] = 'gray'
+        
+        # we process each neighbor of the current node in a depth first way
+        for neighbor in self.adjacency_list[node]:
+            # if unseen
+            if self.color[neighbor] == 'white':
+                # go deeper
+                self.DFS(neighbor)
+        
+        # once we have processed all of the neighbors of the current node
+        # deeply, only then would we consider the node as completely done
+        self.color[node] = 'black'
+    
     ################ ADJACENCY LIST BUILDER HELPERS #####################
     
     def build_edge_input_adjacency_list(self):
@@ -270,63 +334,4 @@ class Graph:
             self.vertex_degrees = {i: 0 for i in range(1, self.nodes_given + 1)}
         
         self.build_edge_input_adjacency_list()
-    
-        
-def main():
-    G1 = Graph([(0, 1), (0, 2), (0, 3), (1, 3), (1, 4)], GraphInputType.EDGE_INPUT)
-    G1.build_adjacency_list()
-    G1.print_graph()
-    
-    G2 = Graph([('A', 'B'), ('A', 'C'), ('C', 'D'), ('D', 'B')], GraphInputType.EDGE_INPUT)
-    G2.build_adjacency_list()
-    G2.print_graph()
-    
-    G3 = Graph([[1, 2, 3], [0, 3], [0, 4], [0, 1], [2]], GraphInputType.INDEX_INPUT)
-    G3.build_adjacency_list()
-    G3.print_graph()
-    
-    G4 = Graph(
-        {
-            'A': ['B', 'C'],
-            'B': ['D', 'A'],
-            'C': ['A', 'D'],
-            'D': ['B', 'C']
-        },
-        GraphInputType.ADJACENCY_LIST
-    )
-    G4.build_adjacency_list()
-    G4.print_graph()
 
-    # ---------- nodes_given (1-based, with isolated node) ----------
-    G5 = Graph(
-        [(1, 2), (2, 3), (4, 5)],
-        GraphInputType.EDGE_INPUT,
-        nodes_given=6,
-        zero_indexed=False
-    )
-    G5.build_adjacency_list()
-    G5.print_graph()
-
-    print("BFS valid path (1 -> 3):", G5.validPathBFS(1, 3))   # True
-    print("BFS valid path (1 -> 6):", G5.validPathBFS(1, 6))   # False
-
-    print("Distances from 1:", G5.calculate_distances_BFS_Unweighted_Graph(1))
-
-    # ---------- nodes_given (0-based, with isolated node) ----------
-    G6 = Graph(
-        [(0, 1), (1, 2), (3, 4)],
-        GraphInputType.EDGE_INPUT,
-        nodes_given=6,
-        zero_indexed=True
-    )
-    G6.build_adjacency_list()
-    G6.print_graph()
-
-    print("BFS valid path (0 -> 2):", G6.validPathBFS(0, 2))   # True
-    print("BFS valid path (0 -> 5):", G6.validPathBFS(0, 5))   # False
-
-    print("Distances from 0:", G6.calculate_distances_BFS_Unweighted_Graph(0))
-
-
-if __name__ == "__main__":
-    main()
