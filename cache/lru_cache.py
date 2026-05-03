@@ -174,8 +174,3 @@ class LRUCache:
             # and remove it from our hashmap as well
             del self.cache[node_to_remove.key]
         
-
-# Your LRUCache object will be instantiated and called as such:
-# obj = LRUCache(capacity)
-# param_1 = obj.get(key)
-# obj.put(key,value)
